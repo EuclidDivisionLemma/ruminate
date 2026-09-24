@@ -20,36 +20,42 @@
 
 use std::unimplemented;
 
-use clap::{ArgAction, Parser};
+use clap::Parser;
+
+use crate::os::OS;
 
 trait Os {
-    fn spawn(&self, program: &str, args: &str, config: &SpawnConfig) {
-        unimplemented!()
-    }
+    fn spawn(&self, program: &str, args: &Vec<String>, config: &SpawnConfig);
 }
 
 struct SpawnConfig {
     node_local_page_table: bool,
 }
 
-// #[cfg(target_os = "linux")]
-// #[path = "./linux.rs"]
-// mod os;
+#[cfg(target_os = "linux")]
+#[path = "./linux.rs"]
+mod os;
 
-// #[cfg(target_os = "redox")]
+#[cfg(target_os = "redox")]
 #[path = "./redox.rs"]
 mod os;
 
 #[derive(clap::Subcommand, Debug)]
-enum SubCommands {
+enum SubCommand {
+    #[clap(about("Launch a program with the specified NUMA behaviour"))]
     Spawn {
         #[arg(help = "Path of the program to run")]
         path: String,
-        #[clap(long, action=ArgAction::SetFalse, help("Make the spawned process use node-local page tables"))]
+        #[clap(
+            long,
+            action,
+            help("Make the spawned process use node-local page tables")
+        )]
         local_pgtbl: bool,
-        #[arg(long, help = "Arguments to the spawned process")]
-        args: String,
+        #[arg(long("arg"), help = "Arguments to the spawned process")]
+        args: Vec<String>,
     },
+    #[clap(about("Display information about system NUMA"))]
     Show,
 }
 
@@ -57,9 +63,24 @@ enum SubCommands {
 #[clap(version, about("Manipulate NUMA behaviour"))]
 struct Cli {
     #[command(subcommand)]
-    commands: SubCommands,
+    command: SubCommand,
 }
 
 fn main() {
-    let x = Cli::parse();
+    let cli = Cli::parse();
+
+    match cli.command {
+        SubCommand::Spawn {
+            path,
+            local_pgtbl,
+            args,
+        } => OS.spawn(
+            &path,
+            &args,
+            &SpawnConfig {
+                node_local_page_table: local_pgtbl,
+            },
+        ),
+        SubCommand::Show => todo!(),
+    }
 }

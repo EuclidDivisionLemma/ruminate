@@ -5,3 +5,12 @@ edition = "2024"
 
 [dependencies]
 clap = { version = "4.6.6", features = ["derive"] }
+colour = "2.1.0"
+
+[target.'cfg(target_os = "redox")'.dependencies]
+redox-rt = {git = "https://gitlab.redox-os.org/redox-os/relibc/", default-features = false}
+libredox = "0.1.25"
+redox_syscall = "0.9.4"
+
+[patch.crates-io]
+redox_syscall = {git = "https://gitlab.redox-os.org/EuclidDivisionLemma/kernel/", branch = "same"}
