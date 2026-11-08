@@ -59,6 +59,18 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "3ded4057c258ba199e2d26386d3af3780957ecaee6c4ef4041c6b4b8b97c0b06"
 
 [[package]]
+name = "cfg-if"
+version = "1.0.5"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "4e7648175b45a9a48536d676f68d918270699102aa8dab5496df06904c914600"
+
+[[package]]
+name = "cfg_aliases"
+version = "0.2.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f079e83a288787bcd14a6aea84cee5c87a67c5a3e660c30f557a3d24761b3527"
+
+[[package]]
 name = "clap"
 version = "4.6.7"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -114,32 +126,10 @@ dependencies = [
 ]
 
 [[package]]
-name = "generic-rt"
-version = "0.1.0"
-source = "git+https://gitlab.redox-os.org/redox-os/relibc/#0d6695935a2ac1034fa972afacaf4fd8741f245a"
-
-[[package]]
-name = "goblin"
-version = "0.10.7"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "17582616a7718cca54cec18e534a76c7c4aec11a8b9a85695712f262fd15a4c8"
-dependencies = [
- "log",
- "plain",
- "scroll",
-]
-
-[[package]]
 name = "heck"
 version = "0.5.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "2304e00983f87ffb38b55b444b5e3b60a884b5d30c0fca7d82fe33449bbe55ea"
-
-[[package]]
-name = "ioslice"
-version = "0.6.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "5e571352c8a3b89074d12e3ee5173ffe162159105352aaaf1fc5764da747e31b"
 
 [[package]]
 name = "is_terminal_polyfill"
@@ -149,27 +139,32 @@ checksum = "a6cb138bb79a146c1bd460005623e142ef0181e3d0219cb493e02f7d08a35695"
 
 [[package]]
 name = "libc"
-version = "0.2.189"
+version = "0.2.191"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3eaf3ede3fee6db1a4c2ee091bf8a8b4dccdc6d17f656fb07896ee72867612f2"
+checksum = "65cd87c9a6d60536580b316ad985726104730a5151c99845f2490428ef91240a"
 
 [[package]]
 name = "libredox"
-version = "0.1.25"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "61ff90caf6077a803a240f62fdbe88645a890bbca49ef8174c3cb0404362171d"
+version = "0.2.1"
+source = "git+https://gitlab.redox-os.org/redox-os/libredox/#1ec76f79ba8587ea8af7bed68a83eb1b41eaa817"
 dependencies = [
  "bitflags",
  "libc",
  "plain",
- "redox_syscall",
+ "redox_syscall 0.9.5",
 ]
 
 [[package]]
-name = "log"
-version = "0.4.34"
+name = "nix"
+version = "0.31.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f9f8bd3e56ce4dfc153cf470fffbfa98c7620958b312ca5c3a4b8d5181fd13c6"
+checksum = "cf20d2fde8ff38632c426f1165ed7436270b44f199fc55284c38276f9db47c3d"
+dependencies = [
+ "bitflags",
+ "cfg-if",
+ "cfg_aliases",
+ "libc",
+]
 
 [[package]]
 name = "once_cell_polyfill"
@@ -202,30 +197,18 @@ dependencies = [
 ]
 
 [[package]]
-name = "redox-path"
-version = "0.4.1"
+name = "redox_syscall"
+version = "0.9.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "083c57139a99303d842a4cfe1f0fd6483d77d81eda1442be84bcb1a0f737ed96"
-
-[[package]]
-name = "redox-rt"
-version = "0.1.0"
-source = "git+https://gitlab.redox-os.org/redox-os/relibc/#0d6695935a2ac1034fa972afacaf4fd8741f245a"
+checksum = "580c875845b41ecb1564ad1ae4703044cef774145e3d7a94dc2b3fa7c97868fd"
 dependencies = [
  "bitflags",
- "generic-rt",
- "goblin",
- "ioslice",
- "libredox",
- "plain",
- "redox-path",
- "redox_syscall",
 ]
 
 [[package]]
 name = "redox_syscall"
-version = "0.9.4"
-source = "git+https://gitlab.redox-os.org/EuclidDivisionLemma/kernel/?branch=same#7ada7bf261e4abbc1e4eabdf45ce4a9ff76b229b"
+version = "0.10.0"
+source = "git+https://gitlab.redox-os.org/redox-os/kernel/#a3596de7e143dccd548459322fd2b2a2fe198a92"
 dependencies = [
  "bitflags",
 ]
@@ -237,28 +220,8 @@ dependencies = [
  "clap",
  "colour",
  "libredox",
- "redox-rt",
- "redox_syscall",
-]
-
-[[package]]
-name = "scroll"
-version = "0.13.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c1257cd4248b4132760d6524d6dda4e053bc648c9070b960929bf50cfb1e7add"
-dependencies = [
- "scroll_derive",
-]
-
-[[package]]
-name = "scroll_derive"
-version = "0.13.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e1a36a382ed65dbcc0ab47fd5e9a94112417ccd34560a392ef3b7b0f0ec39148"
-dependencies = [
- "proc-macro2",
- "quote",
- "syn",
+ "nix",
+ "redox_syscall 0.10.0",
 ]
 
 [[package]]
@@ -269,9 +232,9 @@ checksum = "7da8b5736845d9f2fcb837ea5d9e2628564b3b043a70948a3f0b778838c5fb4f"
 
 [[package]]
 name = "syn"
-version = "3.0.6"
+version = "3.0.9"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8593e8e72159ed2257d083c7a454a85cbf854f37a0966d8d483aff8c8a3ebcee"
+checksum = "d78c8dee4c7bf0e14673097256fed6142ce9d3b85a408189d07482442145823b"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -280,9 +243,9 @@ dependencies = [
 
 [[package]]
 name = "unicode-ident"
-version = "1.0.26"
+version = "1.0.27"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "d245f478577f809a851594d02313b640fb437e0bb33866753cff937863096954"
+checksum = "a2c754d6c33795a1c324727428e5a7dedb5b06195f9890bdbcba760d3e246563"
 
 [[package]]
 name = "utf8parse"

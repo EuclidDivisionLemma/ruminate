@@ -18,9 +18,7 @@
 //                       __| |__| |      __| |__| |
 //                       |___||___|      |___||___|
 
-use std::unimplemented;
-
-use clap::Parser;
+use clap::{Parser, value_parser};
 
 use crate::os::OS;
 
@@ -28,15 +26,20 @@ trait Os {
     fn spawn(&self, program: &str, args: &Vec<String>, config: &SpawnConfig);
 }
 
-struct SpawnConfig {
-    node_local_page_table: bool,
+enum Policy {
+    Local,
+    Preferred(()),
 }
 
-#[cfg(target_os = "linux")]
-#[path = "./linux.rs"]
-mod os;
+struct SpawnConfig {
+    strict: bool,
+}
 
-#[cfg(target_os = "redox")]
+// #[cfg(target_os = "linux")]
+// #[path = "./linux.rs"]
+// mod os;
+
+// #[cfg(target_os = "redox")]
 #[path = "./redox.rs"]
 mod os;
 
@@ -49,14 +52,13 @@ enum SubCommand {
         #[clap(
             long,
             action,
-            help("Make the spawned process use node-local page tables")
+            help("Specifies whether locality should be strictly followed"),
+            default_value("false")
         )]
-        local_pgtbl: bool,
+        strict: bool,
         #[arg(long("arg"), help = "Arguments to the spawned process")]
         args: Vec<String>,
     },
-    #[clap(about("Display information about system NUMA"))]
-    Show,
 }
 
 #[derive(clap::Parser, Debug)]
@@ -70,17 +72,6 @@ fn main() {
     let cli = Cli::parse();
 
     match cli.command {
-        SubCommand::Spawn {
-            path,
-            local_pgtbl,
-            args,
-        } => OS.spawn(
-            &path,
-            &args,
-            &SpawnConfig {
-                node_local_page_table: local_pgtbl,
-            },
-        ),
-        SubCommand::Show => todo!(),
+        SubCommand::Spawn { path, strict, args } => OS.spawn(&path, &args, &SpawnConfig { strict }),
     }
 }
